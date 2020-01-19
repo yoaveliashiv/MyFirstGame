@@ -307,7 +307,7 @@ public class WindowMange extends JFrame implements ActionListener, MouseListener
 		if (str.equals("savePic")) {
 			Graph_Algo a = new Graph_Algo();
 			a.init(g0);
-			/////////save_paint();
+			save_paint("gamePic");
 		}
 		if (str.equals("clearAll")) {
 			clean();
@@ -508,7 +508,7 @@ public class WindowMange extends JFrame implements ActionListener, MouseListener
 	}
 	public void save_paint(String a) {
 		try {
-			BufferedImage image = new BufferedImage(1300, 1200, BufferedImage.TYPE_INT_RGB);
+			BufferedImage image = new BufferedImage(this.getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
 			Graphics2D graphics2D = image.createGraphics();
 			this.paint(graphics2D);
 			File outputfile = new File("ima"+a+".jpg");
@@ -528,17 +528,7 @@ public class WindowMange extends JFrame implements ActionListener, MouseListener
 			syso4="";
 		}
 	}
-	public void saveGraph(String file_name) {
-		try  {    
-			FileOutputStream file = new FileOutputStream(file_name); 
-			ObjectOutputStream out = new ObjectOutputStream(file); 
-			out.writeObject(g0);
-			out.close(); 
-			file.close(); 
-		}   
-		catch(IOException ex)   { 
-		} 
-	} 
+	
 
 	private void setFruitOne(Fruit f) {
 		ArrayList<node_data> a=new ArrayList<node_data>( g0.getV());
