@@ -1,4 +1,4 @@
-package MyGameGUI;
+package gameClient;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -50,10 +50,10 @@ import oop_dataStructure.oop_graph;
 import utils.Point3D;
 
 
-public class Window extends JFrame implements ActionListener, MouseListener {
-	
+public class WindowMange extends JFrame implements ActionListener, MouseListener {
+
 	private String results ="";
-	
+
 	private static double r_minx=999999998;
 	private static double r_maxx=-999999998;
 	boolean r;
@@ -73,22 +73,20 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 	private String syso3 = "";
 	private String syso4 = "";
 	private String w = "";
-	private int src = 0;
-	private int dest = 0;
 	private int count = 0;
 	private int countSave = 0;
-	
+
 	private int numGraph = -1;
 	private int countRoboot = 0;
 	private int robotTemp =-1;
 	private int numRoboot =0;
 	private double valWin =0;
 
-public int getNumGraph() {
-	return numGraph;
-}
-	
-	public Window(DGraph p, game_service game, ArrayList<Nodedata> roobet2, ArrayList<gameClient.Fruit> fruit2,int numGame) {
+	public int getNumGraph() {
+		return numGraph;
+	}
+
+	public WindowMange(DGraph p, game_service game, ArrayList<Nodedata> roobet2, ArrayList<gameClient.Fruit> fruit2,int numGame) {
 		initGUI();
 		numGraph=numGame;
 		this.fruit=fruit2;
@@ -100,7 +98,7 @@ public int getNumGraph() {
 		setList( game);
 		//	game.grt
 		//setRoboot(x, y);
-	
+
 
 		repaint();
 
@@ -126,14 +124,14 @@ public int getNumGraph() {
 
 
 	}
-	public Window() {
+	public WindowMange() {
 		initGUI();
 	}
 
 
 	private void initGUI() {
 		this.setSize(1300, 1200);
-		
+
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		MenuBar menuBar = new MenuBar();
 		Menu menu = new Menu("Menu");
@@ -145,9 +143,6 @@ public int getNumGraph() {
 		this.setMenuBar(menuBar);
 
 
-		Menu algo = new Menu("algo");
-		menuBar.add(algo);
-		this.setMenuBar(menuBar);
 
 		Menu game = new Menu("game");
 		menuBar.add(game);
@@ -157,46 +152,24 @@ public int getNumGraph() {
 		menuBar.add(Choosegraph);
 		this.setMenuBar(menuBar);
 
+		MenuItem item17;
+		for (int i = 0; i < 24; i++) {
+			item17 = new MenuItem(""+i);
+			item17.addActionListener(this);
+			Choosegraph.add(item17);
+		}
 		MenuItem item1 = new MenuItem("savePic");
 		item1.addActionListener(this);
 
 		MenuItem item2 = new MenuItem("clearAll");
 		item2.addActionListener(this);
 
-		MenuItem item3 = new MenuItem("isconnected");
-		item3.addActionListener(this);
 
-		MenuItem item4 = new MenuItem("shortestPathDist");
-		item4.addActionListener(this);
 
-		MenuItem item5 = new MenuItem("path");
-		item5.addActionListener(this);
 
-		MenuItem item6 = new MenuItem("TSP");
-		item6.addActionListener(this);
 
-		MenuItem item8 = new MenuItem("endTSP");
-		item8.addActionListener(this);
 
-		MenuItem item7 = new MenuItem("clearWayAns");
-		item7.addActionListener(this);
 
-		MenuItem item10 = new MenuItem("saveGraph");
-		item10.addActionListener(this);
-		MenuItem item11 = new MenuItem("removeEdgeFromGraph");
-		item11.addActionListener(this);
-
-		MenuItem item12 = new MenuItem("removeNodeFromGraph");
-		item12.addActionListener(this);
-
-		MenuItem item13 = new MenuItem("dataGraphToString");
-		item13.addActionListener(this);
-
-		MenuItem item14 = new MenuItem("toGoBackOneClick");
-		item14.addActionListener(this);
-
-		MenuItem item15 = new MenuItem("saveGraph");
-		item15.addActionListener(this);
 
 		MenuItem item16 = new MenuItem("putRobet");
 		item16.addActionListener(this);
@@ -206,36 +179,12 @@ public int getNumGraph() {
 
 		MenuItem item19 = new MenuItem("moveRobetToEdge");
 		item19.addActionListener(this);
-
-		MenuItem item20 = new MenuItem("new game");
-		item20.addActionListener(this);
-
-
-		MenuItem item17;
-		for (int i = 0; i < 24; i++) {
-			item17 = new MenuItem(""+i);
-			item17.addActionListener(this);
-			Choosegraph.add(item17);
-		}
-		menu.add(algo);
-		menu.add(item14);
-		menu.add(item10);
 		menu.add(item1);
 		menu.add(item2);
-		menu.add(item7);
-		algo.add(item3);
-		algo.add(item4);
-		algo.add(item5);
-		algo.add(item6);
-		algo.add(item8);
-		menu.add(item11);
-		menu.add(item12);
-		menu.add(item13);
-		algo.add(item15);
 		game.add(item16);
 		game.add(item18);
 		game.add(item19);
-		game.add(item20);
+
 		this.addMouseListener(this);
 
 	}
@@ -259,7 +208,9 @@ public int getNumGraph() {
 	public void paint(Graphics g) {
 
 		super.paint(g);
-
+		if(!game.isRunning()) {
+			results="result for graph:"+numGraph+":"+game.toString();
+		}
 		if(numGraph!=-1) {
 			BufferedImage imgGraph  = null;
 			try {
@@ -311,7 +262,7 @@ public int getNumGraph() {
 		}
 		for (int i = 0; i < roobet.size(); i++) {
 			g.drawImage(img, roobet.get(i).getLocation().ix(), roobet.get(i).getLocation().iy(), 18, 18, this);
-			//g.fillOval(roobet.get(i).ix(),roobet.get(i).iy(), 12, 12);
+
 		}
 
 
@@ -321,19 +272,11 @@ public int getNumGraph() {
 	@Override
 
 	public void actionPerformed(ActionEvent e) {
-		//if(game!=null &&game.isRunning())results="TimeToEnd:"+game.timeToEnd();
-//		if(endGame) {
-//			setVisible(false); //you can't see me!
-//			dispose();
-//		}
-		String str = e.getActionCommand();
-		if(str.equals("toGoBackOneClick")) {
-			Graph_Algo c = new Graph_Algo();
-			c.init("return.txt");
-			g0 =new DGraph(c.copy());
-		}
 
-		saveGraph("return.txt");
+		String str = e.getActionCommand();
+
+
+
 		if(str.equals("TimeToEnd")) {
 			System.out.println(game.timeToEnd());
 			if(game.isRunning())results="TimeToEnd:"+game.timeToEnd();
@@ -343,18 +286,11 @@ public int getNumGraph() {
 			syso="ches roobet to move"; 
 			w="moveRobetToEdge";
 		}
-		if(str.equals("new game")) {
-			setVisible(false); //you can't see me!
-			dispose();
-			Window window = new Window();
-			window.setVisible(true);
-		}
 		if(str.equals("putRobet")) {
 			if(roobet.size()<numRoboot)w="putRobet";
 			else {
 				syso="only"+ numRoboot+" robets in this graph";
 				w="";
-
 			}
 		}
 
@@ -362,139 +298,32 @@ public int getNumGraph() {
 			clean();
 			results="";
 			numGraph=Integer.valueOf(str);
-			game = Game_Server.getServer(numGraph); // you have [0,23] games
-			//results=""+	game.getGraph();
-			String g = game.getGraph();
-			g0=new DGraph();
-			g0.init(g);	
-			setGrafh();
-
-			setList(game);
-
-			setNumRoobot();
-
-			syso="ches were put roobots";
-			repaint();
 			
 
 		}
 
-		if(!str.equals("savePic")) {
-			syso1="";
-			syso2="";
-			syso3="";
-			syso4="";
-		}
-		Graph_Algo a = new Graph_Algo();
+
+
 		if (str.equals("savePic")) {
+			Graph_Algo a = new Graph_Algo();
 			a.init(g0);
-			//save_paint();
+			/////////save_paint();
 		}
 		if (str.equals("clearAll")) {
-			valWin=0;
-			fruit = new ArrayList<Fruit>();
-			w = "";
-		
-			count = 0;
-			src = 0;
-			dest = 0;
-			g3 = new ArrayList<node_data>();
-			g0 = new DGraph();
-			g4 = new ArrayList<Integer>();
-			syso = "All clear";
-			syso1="";
-			syso2="";
-			syso3="";
-			syso4="";
-			roobet =new ArrayList<Nodedata>();
-		}
-		if (str.equals("dataGraphToString")) {
-			syso = g0.toStringDataNode();
-			syso1=g0.toStringedgedataNode();
-			syso2="size DataNode:"+g0.nodeSize();
-			syso3="size edgedataNode:"+g0.edgeSize();
-			syso4="MC:"+g0.getMC();
-			System.out.println(syso);
-			System.out.println(syso2);
-			System.out.println(syso1);
-			System.out.println(syso3);
-			System.out.println(syso4);	
-		}
-		if (str.equals("clearWayAns")) {
-			w = "";
-			count = 0;
-			src = 0;
-			dest = 0;
-			g3 = new ArrayList<node_data>();
-			g4 = new ArrayList<Integer>();
-			syso1="";
-			syso2="";
-			syso3="";
-			syso4="";
-			syso="the wayAns clear";
-
-
+			clean();
 		}
 
-		if (str.equals("isconnected")) {
-			a.init(g0);
-			boolean cv = a.isConnected();
-			syso = "" + cv;
-			System.out.println(cv);
-		}
-		if (str.equals("shortestPathDist")) {
-			w = str;
-			syso = "Choose a src and dest";
-		}
-
-		if (str.equals("path")) {
-			syso = "Choose a src and dest";
-			w = str;
-		}
-		if (str.equals("endTSP")) {
-			a.init(g0);
-			g3 = new ArrayList<node_data>(a.TSP(g4));
-			ArrayList<Integer> g2 = new ArrayList<Integer>();
-			for (int i = 0; i < g3.size(); i++)
-				g2.add(g3.get(i).getKey());
-			syso = "TSP targets:"+g4.toString();
-			syso1=".TSP ans:" + g2.toString();
-			System.out.println("TSP ans:" + g2.toString());
-			g4 = new ArrayList<Integer>();
-			w = "";
-		}
-		if (str.equals("TSP")) {
-			w = str;
-			syso = "Choose a point or end";
-		}
-		if (str.equals("saveGraph")) {
-			a.init(g0);
-			a.save("graph1" + countSave + ".txt");
-			countSave++;
-			syso = "Graph save";
-		}
-		if (str.equals("removeEdgeFromGraph")) {
-			syso = "Choose a src and dest";
-			w = str;
-		}
-		if (str.equals("removeNodeFromGraph")) {
-			syso = "Choose a node key";
-			w = str;
-		}
-repaint();
+		repaint();
 	}
 
 
 	private void clean() {
-if(game!=null)game.stopGame();
-		
+		if(game!=null)game.stopGame();
 		countRoboot=0;
 		valWin=0;
 		fruit = new ArrayList<Fruit>();
 		w = "";
 		count = 0;
-		src = 0;
-		dest = 0;
 		g3 = new ArrayList<node_data>();
 		g0 = new DGraph();
 		g4 = new ArrayList<Integer>();
@@ -504,7 +333,6 @@ if(game!=null)game.stopGame();
 		syso3="";
 		syso4="";
 		roobet =new ArrayList<Nodedata>();
-
 	}
 	private void setNumRoobot() {
 		String info=""+game.toString();
@@ -518,7 +346,6 @@ if(game!=null)game.stopGame();
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		saveGraph("return.txt");
 		syso = "";
 		syso1="";
 		syso2="";
@@ -532,13 +359,13 @@ if(game!=null)game.stopGame();
 				game.addRobot(n.getKey());
 				roobet.add(n);
 				game.startGame();
-if(game.isRunning()) {
-				
-				syso2="game start";
-				trehd1(game);
-}else {
-	syso2="put mor roobot";
-}
+				if(game.isRunning()) {
+
+					syso2="game start";
+					trehd1(game);
+				}else {
+					syso2="put mor roobot";
+				}
 			}
 			else {
 				w="";
@@ -546,88 +373,7 @@ if(game.isRunning()) {
 			}
 		}
 
-		else if (w.equals("path") || w.equals("shortestPathDist")||w.equals("removeEdgeFromGraph")||w.equals("removeNodeFromGraph")) {
-			double x = e.getX();
-			double y = e.getY();
-			ArrayList<node_data> g1 = new ArrayList<node_data>(g0.getV());
-			for (node_data a : g1) {
-				Point3D p1 = new Point3D((int) a.getLocation().x(), (int) a.getLocation().y());
-				if (x < p1.x() + 15 && x > p1.x() - 15 && y < p1.y() + 15 && y > p1.y() - 15) {
-					if (count == 0)src = a.getKey();
-					else dest = a.getKey();
-				}
-			}
-			count++;
-			if (count == 1) {
-				if(w.equals("removeNodeFromGraph")) {
-					g0.removeNode(src);
-					syso="remove node:"+src;
-					System.out.println(syso);
-					w = "";
-					count = 0;
-					src = 0;
-					dest = 0;
-				}
-				else {
-					syso = "in list: " + src + ", choose dest";
-					System.out.println("in list: " + src + "," + dest);
-				}
-			} else {
-				if(w.equals("removeEdgeFromGraph")) {
-					g0.removeEdge(src, dest);
-					syso="remove edge from :"+src+" to "+dest;
-					System.out.println(syso);
-				}
-				else if (w.equals("shortestPathDist")) {
-					Graph_Algo a = new Graph_Algo();
-					a.init(g0);
-					double ans = a.shortestPathDist(src, dest);
-					syso = "from src:"+src+"  to dest:"+dest+"  dist=" + ans;
-					System.out.println(ans);
-				}
-				else if (w.equals("path")) {
-					Graph_Algo a = new Graph_Algo();
-					a.init(g0);
-					g3 = new ArrayList<node_data>(a.shortestPath(src, dest));
-					ArrayList<Integer> g2 = new ArrayList<Integer>();
-					for (int i = 0; i < g3.size(); i++)
-						g2.add(g3.get(i).getKey());
-					syso = "from src:"+src+" to dest:"+dest;
-					syso1="Path ans:" + g2.toString();
-					System.out.println("Path ans:" + g2);
 
-				}
-				w = "";
-				count = 0;
-				src = 0;
-				dest = 0;
-			}
-		} else if (w.equals("TSP")) {
-			double x = e.getX();
-			double y = e.getY();
-			ArrayList<node_data> g1 = new ArrayList<node_data>(g0.getV());
-			for (node_data a : g1) {
-				Point3D p1 = new Point3D((int) a.getLocation().x(), (int) a.getLocation().y());
-				if (x < p1.x() + 15 && x > p1.x() - 15 && y < p1.y() + 15 && y > p1.y() - 15)
-					g4.add(a.getKey());
-			}
-			syso = "in list:" + g4;
-			System.out.println("in list:" + g4.get(g4.size() - 1));
-		}
-		else if(w.equals("moveRobetToFruit")) {
-			double x = e.getX();
-			double y = e.getY();
-			if(countRoboot==0) {
-				setRoboot(x,y);
-				syso="chas whre fuirt to move";
-			}
-			else {
-
-				//	moveRoobotToFruit(x, y);
-				countRoboot=0;
-				w="";
-			}
-		}
 		else if(w.equals("moveRobetToEdge")) {
 			double x = e.getX();
 			double y = e.getY();
@@ -647,7 +393,7 @@ if(game.isRunning()) {
 	}
 
 	private void moveRoobotToEdge(double x, double y) {
-	
+
 		node_data nodeTemp=new Nodedata();
 		nodeTemp=setnode(x, y);
 		if(nodeTemp.getKey()!=-1) {
@@ -664,7 +410,7 @@ if(game.isRunning()) {
 			clean();
 		}
 	}
-	
+
 	private double getVal() {
 		double sum=0;
 		for (String r: game.getRobots()) {
@@ -706,29 +452,29 @@ if(game.isRunning()) {
 	private  void moveRobots(int nodeDest) {
 		while(game.getRobots().get(robotTemp).toString().lastIndexOf("-")<0) {
 			game.move();
-	}
+		}
 
-		 game.chooseNextEdge(robotTemp, nodeDest);
-		 trehd(game);
+		game.chooseNextEdge(robotTemp, nodeDest);
+		trehd(game);
 		r=false;	
 
 	}
 
 	private void fuirtRandom(int i) {
-		
+
 		for (Fruit j: fruit) {
 			g0.getEdgeE(j.getSrc(),j.getDest()).deletFruit();
 		}
 
 		fruit=new ArrayList<Fruit>();
-		
+
 
 		setList(game);
 
 	}
 	@Override
 	public void mouseReleased(MouseEvent e) {
-	
+
 	}
 
 	@Override
@@ -738,7 +484,7 @@ if(game.isRunning()) {
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-	
+
 	}
 	public void setRoboot(double x, double y) {
 
@@ -841,17 +587,7 @@ if(game.isRunning()) {
 
 		return false;
 	}
-	private boolean findOn1(edge_data e, Fruit f) {
-		//		double x1=g0.getNode(e.getSrc()).getLocation().x();
-		//		double x2=g0.getNode(e.getDest()).getLocation().x();
-		//		double y1=g0.getNode(e.getSrc()).getLocation().y();
-		//		double y2=g0.getNode(e.getDest()).getLocation().y();//;y-y1=mx-mx1             y=y1-mx1
-		//		double m=(y1-y2)/(x1-x2); //(y-y1=m(x-x1
-		//		double c=y1-(m*x1);
 
-
-		return false;
-	}
 
 	public static  void setList( game_service game ) {
 		Iterator<String> f_iter = game.getFruits().iterator();
@@ -875,16 +611,16 @@ if(game.isRunning()) {
 			fruit.get(i).setLocation(new Point3D(scaleX(r_maxx,r_minx,fruit.get(i).getPos().x()),scaleY(r_maxy,r_miny,fruit.get(i).getPos().y())));
 		}
 		setFruit();
-	
+
 	}
 	public  void trehd(game_service game) {
 		Thread a=new  Thread(new Runnable() {
 			@Override
 			public void run() {
 				while(game.isRunning()) {
-				
+
 					game.move();
-					
+
 					try {
 						Thread.sleep(60);
 					}
@@ -902,7 +638,7 @@ if(game.isRunning()) {
 			public void run() {
 				while(game.isRunning()) {
 					results="TimeToEnd:"+game.timeToEnd();
-					
+
 					repaint();
 					try {
 						Thread.sleep(2250);
@@ -918,7 +654,7 @@ if(game.isRunning()) {
 
 	public static void main(String[] args) {
 
-		Window window = new Window();
+		WindowMange window = new WindowMange();
 		window.setVisible(true);
 
 

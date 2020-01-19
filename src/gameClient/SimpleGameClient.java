@@ -20,30 +20,14 @@ import dataStructure.node_data;
 import oop_dataStructure.OOP_DGraph;
 import oop_dataStructure.oop_edge_data;
 import oop_dataStructure.oop_graph;
-/**
- * This class represents a simple example for using the GameServer API:
- * the main file performs the following tasks:
- * 1. Creates a game_service [0,23] (line 36)
- * 2. Constructs the graph from JSON String (lines 37-39)
- * 3. Gets the scenario JSON String (lines 40-41)
- * 4. Prints the fruits data (lines 49-50)
- * 5. Add a set of robots (line 52-53) // note: in general a list of robots should be added
- * 6. Starts game (line 57)
- * 7. Main loop (should be a thread) (lines 59-60)
- * 8. move the robot along the current edge (line 74)
- * 9. direct to the next edge (if on a node) (line 87-88)
- * 10. prints the game results (after "game over"): (line 63)
- *  
- * @author boaz.benmoshe
- *
- */
+
 public class SimpleGameClient {
 	public static boolean start;
 	public static void main(String[] a) {
 
 		test1();}
 	public static void test1() {
-		int scenario_num = 11;
+		int scenario_num = 0;
 		game_service game = Game_Server.getServer(scenario_num); // you have [0,23] games
 
 		String g = game.getGraph();
@@ -67,7 +51,7 @@ public class SimpleGameClient {
 
 
 
-		Window window = new Window(gg,game,roobet,fruit,scenario_num );
+		WindowMange window = new WindowMange(gg,game,roobet,fruit,scenario_num );
 		window.setVisible(true);
 		int dests[]=new int[E.length];
 		for (int i = 0; i < dests.length; i++) {
@@ -95,7 +79,7 @@ public class SimpleGameClient {
 	 * @param src 
 	 * @param log
 	 */
-	private static void moveRobots(game_service game, DGraph gg, ArrayList<Nodedata> roobet, Window window,int []dests, ArrayList<Integer> src) {
+	private static void moveRobots(game_service game, DGraph gg, ArrayList<Nodedata> roobet, WindowMange window,int []dests, ArrayList<Integer> src) {
 
 		  ArrayList<List<node_data>> dest1 = new ArrayList<List<node_data>>();		
 		int dest;
@@ -124,9 +108,9 @@ public class SimpleGameClient {
 			
 				
 				window.repaint();
-				Window.setList(game);
+				WindowMange.setList(game);
 				window.repaint();
-				//window.paint2();
+				
 
 			
 		
