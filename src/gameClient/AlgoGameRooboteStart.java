@@ -1,0 +1,223 @@
+package gameClient;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import MyGameGUI.*;
+import Server.Game_Server;
+import Server.game_service;
+import dataStructure.DGraph;
+import dataStructure.Edgedata;
+import dataStructure.edge_data;
+import dataStructure.node_data;
+import utils.Point3D;
+
+public class AlgoGameRooboteStart {
+	int idR[] ;
+	private  ArrayList<Fruit> fruit = new ArrayList<Fruit>();
+	private DGraph g0 = new DGraph();
+	private  Edgedata EdgedataMaxVal[];
+
+	public static void main(String[] a) {
+		int scenario_num = 0;
+		game_service game = Game_Server.getServer(scenario_num);
+		System.out.println(game.getFruits());
+		AlgoGameRooboteStart al=new AlgoGameRooboteStart(game,scenario_num );
+		for(Fruit f:al.fruit) {
+		System.out.println("src:"+f.getSrc()+",dest:"+f.getDest()+"type:"+f.getType());
+		}
+		System.out.println("node 9 y:"+al.g0.getNode(9).getLocation().y()+"node8 y:"+al.g0.getNode(8).getLocation().y());
+		System.out.println("node 4 y:"+al.g0.getNode(4).getLocation().y()+"node 3 y:"+al.g0.getNode(3).getLocation().y());
+
+		for (int i = 0; i < al.EdgedataMaxVal.length; i++) {
+			System.out.println(al.EdgedataMaxVal[i].getSrc()+"ans");
+			System.out.println(al.EdgedataMaxVal[i].getFruit().get(0).getValue());
+		}
+
+	}
+public Edgedata[] getEdgedataMaxVal() {
+	return EdgedataMaxVal;
+}
+	public AlgoGameRooboteStart(game_service game,int numGame){
+		String info=game.toString();
+		int numR=Integer.valueOf(""+info.charAt(info.indexOf("graph")-3));
+		idR=new int[numR];
+		EdgedataMaxVal=new Edgedata[numR];
+		String g = game.getGraph();
+		g0=new DGraph();
+		g0.init(g);	
+		setList(game);
+
+		
+		if(numR==1)getEdgeMaxValueFruit1();
+		else if (numR==2)getEdgeMaxValueFruit2();
+		else getEdgeMaxValueFruit3();
+	//	if(numGame==0)EdgedataMaxVal[0]=new Edgedata(9, 8, 1);
+		//if(numGame==3)EdgedataMaxVal[0]=new Edgedata(3, 2, 1);
+	}
+	public void getEdgeMaxValueFruit3() {
+		Edgedata max1=new Edgedata();
+		Edgedata max2=new Edgedata();
+		Edgedata max3=new Edgedata();
+		ArrayList<node_data> a=new ArrayList<node_data>( g0.getV());
+		int sumBig1=0;
+		int sumBig2=0;
+		int sumBig3=0;
+		for (node_data n:a) {
+			ArrayList<edge_data> b=new ArrayList<edge_data>(g0.getE(n.getKey()));
+			for(edge_data e:b) {
+				int sum=0;
+				for(Fruit f:e.getFruit()) {
+					sum+=f.getValue();
+				}
+				if(sum>sumBig3) {
+					if(sum>sumBig1) {
+						sumBig3=sumBig2;
+						max3=max2;
+						sumBig2=sumBig1;
+						sumBig1=sum;
+						max2=max1;	
+						max1=new Edgedata(e);
+						
+					}
+					else if(sum>sumBig2){
+						sumBig3=sumBig2;
+						sumBig2=sum;
+						max3=max2;
+						max2=new Edgedata(e);	
+					}
+					else{
+						sumBig3=sum;
+						max3=new Edgedata(e);	
+					}
+
+				}	
+			}
+		}
+		EdgedataMaxVal[0]=max1;
+		EdgedataMaxVal[1]=max2;
+		EdgedataMaxVal[2]=max3;
+	}
+	public void getEdgeMaxValueFruit2() {
+		Edgedata max1=new Edgedata();
+		Edgedata max2=new Edgedata();
+		ArrayList<node_data> a=new ArrayList<node_data>( g0.getV());
+		int sumBig1=0;
+		int sumBig2=0;
+		for (node_data n:a) {
+			ArrayList<edge_data> b=new ArrayList<edge_data>(g0.getE(n.getKey()));
+			for(edge_data e:b) {
+				int sum=0;
+			
+				for(Fruit f:e.getFruit()) {
+				
+					sum+=f.getValue();
+				
+				}
+				if(sum>sumBig2) {
+					if(sum>sumBig1) {
+						sumBig2=sumBig1;
+						max2=max1;
+						sumBig1=sum;
+						max1=new Edgedata(e);
+					}
+					else {
+						sumBig2=sum;
+						max2=new Edgedata(e);
+
+					}
+				}	
+			}
+		}
+
+		EdgedataMaxVal[0]=max1;
+		EdgedataMaxVal[1]=max2;
+	}
+	public void getEdgeMaxValueFruit1() {
+		Edgedata max=new Edgedata();
+		ArrayList<node_data> a=new ArrayList<node_data>( g0.getV());
+		int sumBig=0;
+		for (node_data n:a) {
+			ArrayList<edge_data> b=new ArrayList<edge_data>(g0.getE(n.getKey()));
+			for(edge_data e:b) {
+				int sum=0;
+			
+				for(Fruit f:e.getFruit()) {
+				
+					sum+=f.getValue();
+				
+				}
+				if(sum>sumBig) {
+					sumBig=sum;
+					max=new Edgedata(e);
+				}	
+			}
+		}
+
+		this.EdgedataMaxVal[0]=max;
+	}
+
+
+
+
+
+	public void setFruit() {
+		for (Fruit f:fruit) {
+			ArrayList<node_data> a=new ArrayList<node_data>( g0.getV());
+			boolean noFound=true;
+			for (int i = 0; i < a.size()&&noFound; i++) {
+				int node_id=a.get(i).getKey();
+				ArrayList<edge_data> b=new ArrayList<edge_data>(g0.getE(node_id));
+				for(edge_data e:b) {
+					if(findOn(e,f)) {
+						e.setFruit(f);
+						noFound=false;
+						break;
+					}
+				}
+			}
+		}
+	}
+	public boolean findOn(edge_data e, Fruit f) {
+		if(Math.abs(g0.getNode(e.getSrc()).getLocation().y())-Math.abs(g0.getNode(e.getDest()).getLocation().y())>0) {
+			if(f.getType()==1) return false;
+		}
+		else {
+			if(f.getType()==-1) return false;
+		}
+
+		double distSrc=f.getPos().distance2D(g0.getNode(e.getSrc()).getLocation());
+		double distDest=f.getPos().distance2D(g0.getNode(e.getDest()).getLocation());
+		double distEdge=g0.getNode(e.getDest()).getLocation().distance2D(g0.getNode(e.getSrc()).getLocation());
+		if(distDest+distSrc-distEdge >=-0.0001&&distDest+distSrc-distEdge <=0.0001)return true;
+
+		return false;
+	}
+
+	public   void setList( game_service game ) {
+		Iterator<String> f_iter = game.getFruits().iterator();
+		String sF="";
+		while(f_iter.hasNext()) {
+			sF=""+f_iter.next();	
+			JSONObject line;
+			try {
+				line = new JSONObject(sF);
+				JSONObject ttt = line.getJSONObject("Fruit");
+				double value = ttt.getDouble("value");
+				int type = ttt.getInt("type");
+				String p = ttt.getString("pos");
+				Point3D pos = new Point3D(p);
+				fruit.add(new Fruit(value, type, pos));
+			}
+			catch (JSONException r) {r.printStackTrace();}
+
+		}
+		setFruit();
+
+	}
+
+}
