@@ -5,5 +5,5 @@ At each level there are nodes and ways between nodes. In addition, robots and fr
 **Purpose of the game:** collect as many points as possible during the game.  
 **How to play**: The robots should move on the map and eat as much fruit as possible in the remaining time.        
 **The game has two interfaces:**    
-Manual interface where every move the user has to choose where he wants to move the robot.
+Manual interface where every move the user has to choose where he wants to move the robot.  
 An automatic interface where the robots move in each move according to the algorithm in the game. The algorithm should be as efficient as possible.
