@@ -44,7 +44,7 @@ public class lornd {
 		
 		test1();}
 	public static void test1() {
-		int scenario_num = 1;
+		int scenario_num = 0;
 		game_service game = Game_Server.getServer(scenario_num); // you have [0,23] games
 		//System.out.println(game.getFruits()+"fruit");
 		String g = game.getGraph();

@@ -275,7 +275,7 @@ public class Window extends JFrame implements ActionListener, MouseListener {
 //			if(numGraph>=20&& numGraph<=23)numGraph=5;
 			BufferedImage imgGraph  = null;
 			try {
-				imgGraph = ImageIO.read(new File("imageG"+numGraph+".jpg"));
+				imgGraph = ImageIO.read(new File( "data\\imageG"+numGraph+".jpg"));
 			} catch (IOException e) {
 				syso="no seccs fruit";
 			}
@@ -1038,6 +1038,7 @@ if(game.isRunning()) {
 			fruit.get(i).setLocation(new Point3D(scaleX(r_maxx,r_minx,fruit.get(i).getPos().x()),scaleY(r_maxy,r_miny,fruit.get(i).getPos().y())));
 		}
 		setFruit();
+	
 	}
 	public  void trehd(game_service game) {
 		Thread a=new  Thread(new Runnable() {

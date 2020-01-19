@@ -40,55 +40,48 @@ import oop_dataStructure.oop_graph;
 public class SimpleGameClient {
 	public static boolean start;
 	public static void main(String[] a) {
-		
+
 		test1();}
 	public static void test1() {
-		int scenario_num = 0;
+		int scenario_num = 11;
 		game_service game = Game_Server.getServer(scenario_num); // you have [0,23] games
-		//System.out.println(game.getFruits()+"fruit");
+
 		String g = game.getGraph();
 		DGraph gg = new DGraph();
 		gg.init(g);
-		 ArrayList<Nodedata> roobet = new ArrayList<Nodedata>();
-		 ArrayList<Fruit> fruit = new ArrayList<Fruit>();
-		 AlgoGameRooboteStart A=new AlgoGameRooboteStart(game,scenario_num);
-			Edgedata []E=A.getEdgedataMaxVal();
-		
+		ArrayList<Nodedata> roobet = new ArrayList<Nodedata>();
+		ArrayList<Fruit> fruit = new ArrayList<Fruit>();
+		AlgoGameRooboteStart A=new AlgoGameRooboteStart(game,scenario_num);
+		Edgedata []E=A.getEdgedataMaxVal();
+
 		String info = game.toString();
-		JSONObject line;
-		try {
-			line = new JSONObject(info);
-			JSONObject ttt = line.getJSONObject("GameServer");
-			int rs = ttt.getInt("robots");
-			
-			// the list of fruits should be considered in your solution
-			Iterator<String> f_iter = game.getFruits().iterator();
-			//while(f_iter.hasNext()) {System.out.println(f_iter.next());}	
-			
-			int src_node = 0;  // arbitrary node, you should start at one of the fruits
-			for (int j = 0; j < E.length; j++) {
-				game.addRobot(E[j].getSrc());
-				roobet.add(new Nodedata(gg.getNode(E[j].getSrc())));
-				System.out.println(game.getRobots());
-			}
-			
-			
+
+		ArrayList<Integer> srcR = new ArrayList<Integer>();
+		for (int j = 0; j < E.length; j++) {
+			game.addRobot(E[j].getSrc());
+			roobet.add(new Nodedata(gg.getNode(E[j].getSrc())));
+			 srcR.add(E[j].getSrc());
+			System.out.println("rstart"+E[j].getSrc());
 		}
-		catch (JSONException e) {e.printStackTrace();}
+
+
+
+
 		Window window = new Window(gg,game,roobet,fruit,scenario_num );
 		window.setVisible(true);
-	int dests[]=new int[E.length];
-	for (int i = 0; i < dests.length; i++) {
-		dests[i]=E[i].getDest();
-	}
-	start=true;
-		// should be a Thread!!!
-	game.startGame();
-	trehd(game);
-		while(game.isRunning()) {
-			moveRobots(game, gg,roobet ,window,dests,start);
+		int dests[]=new int[E.length];
+		for (int i = 0; i < dests.length; i++) {
+			dests[i]=E[i].getDest();
+		//	System.out.println("dest"+dests[i]);
 		}
-		String results = game.toString();
+		start=true;
+		// should be a Thread!!!
+		game.startGame();
+		trehd(game);
+		while(game.isRunning()) {
+			moveRobots(game, gg,roobet ,window,dests,srcR);
+		}
+		String results ="lll"+ game.toString();
 		System.out.println(results);
 	}
 	/** 
@@ -99,75 +92,65 @@ public class SimpleGameClient {
 	 * @param roobet 
 	 * @param window 
 	 * @param window 
-	 * @param start 
+	 * @param src 
 	 * @param log
 	 */
-	private static void moveRobots(game_service game, DGraph gg, ArrayList<Nodedata> roobet, Window window,int []dests, boolean start) {
+	private static void moveRobots(game_service game, DGraph gg, ArrayList<Nodedata> roobet, Window window,int []dests, ArrayList<Integer> src) {
+
+		  ArrayList<List<node_data>> dest1 = new ArrayList<List<node_data>>();		
+		int dest;
 		
-		List<node_data> dest1=new ArrayList<node_data>();
-		List<String> log = game.move();
-		if(log!=null) {
-			long t = game.timeToEnd();
-			for(int i=0;i<log.size();i++) {
-				String robot_json = log.get(i);
-				try {
-					JSONObject line = new JSONObject(robot_json);
-					JSONObject ttt = line.getJSONObject("Robot");
-					int rid = ttt.getInt("id");
-					int src = ttt.getInt("src");
-					int dest = ttt.getInt("dest");
-					
-					if(dest==-1) {	
-						for (int j = 0; j < dests.length; j++) {
-							
-							
-							if(dest1.size()==0) {
-							AlgoGameWhereTheRoobotsGo R=new AlgoGameWhereTheRoobotsGo(game,dests);
-							dest1=R.getDest1();
-							System.out.println(dest1.size()+"size");
-							}
-							dest=dest1.get(0).getKey();
-							dests[j]=dest;
-							dest1.remove(0);
-						System.out.println(dest+"dest");
-							
-							
-						System.out.println(dest+"dest");
-						game.chooseNextEdge(j, dest);
-						System.out.println("????????");
-						roobet.get(j).copy(new Nodedata(gg.getNode(dest)));
-						}
-						
-					System.out.println(game.getRobots());
-						Iterator<String> f_iter = game.getFruits().iterator();
-						while(f_iter.hasNext()) {System.out.println(f_iter.next());}	
-						Window.setList(game);
-						window.repaint();
-						//window.paint2();
-						
+
+				for (int j = 0; j < dests.length; j++) {
+					while(game.isRunning() &&game.getRobots().get(j).toString().lastIndexOf("-")<0) {
+						game.move();
 					}
-				} 
-				catch (JSONException e) {e.printStackTrace();}
-			}
-		}
-	}
-	/**
-	 * a very simple random walk implementation!
-	 * @param g
-	 * @param src
-	 * @return
-	 */
-	private static int nextNode(DGraph g, int src) {
-		int ans = -1;
-		Collection<edge_data> ee = g.getE(src);
-		Iterator<edge_data> itr = ee.iterator();
-		int s = ee.size();
-		int r = (int)(Math.random()*s);
-		int i=0;
-		while(i<r) {itr.next();i++;}
-		ans = itr.next().getDest();
-		return ans;
-	}
+
+					if(dest1.size()==0 ) {
+						AlgoGameWhereTheRoobotsGo R=new AlgoGameWhereTheRoobotsGo(game,src);
+						dest1=R.getDest1();
+						System.out.println(dest1.size()+"size");
+					}
+					System.out.println(j+"j");
+					System.out.println(dest1.size()+"dest1");
+					dest=dest1.get(j).get(0).getKey();
+					src.set(j, dest);
+					dest1.get(j).remove(0);
+					System.out.println(dest+"dest");
+					game.chooseNextEdge(j, dest);
+				
+					roobet.get(j).copy(new Nodedata(gg.getNode(dest)));
+				}
+			
+				
+				window.repaint();
+				Window.setList(game);
+				window.repaint();
+				//window.paint2();
+
+			
+		
+	
+	
+
+}
+/**
+ * a very simple random walk implementation!
+ * @param g
+ * @param src
+ * @return
+ */
+private static int nextNode(DGraph g, int src) {
+	int ans = -1;
+	Collection<edge_data> ee = g.getE(src);
+	Iterator<edge_data> itr = ee.iterator();
+	int s = ee.size();
+	int r = (int)(Math.random()*s);
+	int i=0;
+	while(i<r) {itr.next();i++;}
+	ans = itr.next().getDest();
+	return ans;
+}
 
 
 
@@ -176,9 +159,9 @@ public static  void trehd(game_service game) {
 		@Override
 		public void run() {
 			while(game.isRunning()) {
-			
+
 				game.move();
-				
+
 				try {
 					Thread.sleep(100);
 				}
