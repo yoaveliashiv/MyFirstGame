@@ -6,9 +6,9 @@ import java.util.Iterator;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import MyGameGUI.Point3D;
 import Server.game_service;
 import dataStructure.Nodedata;
-import utils.Point3D;
 
 public class Fruit {
 	private double value=0;

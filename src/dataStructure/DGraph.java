@@ -6,10 +6,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import MyGameGUI.Point3D;
 import Server.fruits;
 import gameClient.Fruit;
 import oop_dataStructure.OOP_DGraph;
-import utils.Point3D;
 
 import java.io.*;
 

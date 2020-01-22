@@ -1,5 +1,6 @@
 package gameClient;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
@@ -25,13 +26,18 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import MyGameGUI.Point3D;
 import Server.Game_Server;
 import Server.fruits;
 import Server.game_service;
@@ -44,16 +50,27 @@ import dataStructure.edge_data;
 import dataStructure.graph;
 import dataStructure.node_data;
 import gameClient.Fruit;
-
 import oop_dataStructure.OOP_DGraph;
 import oop_dataStructure.oop_graph;
-import utils.Point3D;
 
 
 public class WindowMange extends JFrame implements ActionListener, MouseListener {
 
-	private String results ="";
 
+
+	private JTextField textField_1;
+	private JButton btnNewButton;
+	private JPanel panel;
+	private JPasswordField idField;
+	private char[] id = new char[10];
+	private int id2=-1;
+	private String levelYouWantToPlay="";
+	private int levelYouWantToPlayInt=-1;
+
+
+
+
+	private String results ="";
 	private static double r_minx=999999998;
 	private static double r_maxx=-999999998;
 	boolean r;
@@ -72,24 +89,50 @@ public class WindowMange extends JFrame implements ActionListener, MouseListener
 	private String syso2 = "";
 	private String syso3 = "";
 	private String syso4 = "";
+	private String levelMax = "";
 	private String w = "";
 	private int count = 0;
 	private int countSave = 0;
-
+	private int id1 = 0;
 	private int numGraph = -1;
 	private int countRoboot = 0;
 	private int robotTemp =-1;
 	private int numRoboot =0;
 	private double valWin =0;
+	private BufferedImage imgFruit2 = null;
+	private 	BufferedImage imgFruit = null;
+	private BufferedImage imgGraph  = null;
+	private BufferedImage roobetImg1 = null;
+	private	BufferedImage roobetImg2 = null;
+	private BufferedImage roobetImg3 = null;
+	private  JLabel l1;
+	private HashMap<Integer, String[]> infoScore=new HashMap<Integer, String[]>();
+	private String  numPlayTody;
+	private String  myBestScore[]=new String[11];
+	private int levelInfoPrint;
+	boolean toPrintInfo = false;
 
+	public void setLevelMax() {
+		Game_Server.login(id2);
+		game_service game = Game_Server.getServer(0);
+		String s=game.toString();
+		levelMax="you in level:"+s.substring(s.lastIndexOf("user")+12,s.lastIndexOf("robots")-2);
+
+	}
 	public int getNumGraph() {
 		return numGraph;
 	}
-
-	public WindowMange(DGraph p, game_service game, ArrayList<Nodedata> roobet2, ArrayList<gameClient.Fruit> fruit2,int numGame) {
+	public void setId(int id) {
+		this.id1=id;
+		this.setLevelMax();
+	}
+	public void SetNumGraph(int numG) {
+		numGraph=numG;
+	}
+	public WindowMange(DGraph p, game_service game, ArrayList<Nodedata> roobet2, int numGame) {
 		initGUI();
 		numGraph=numGame;
-		this.fruit=fruit2;
+
 		this.roobet=roobet2;
 		this.game=game;
 		game.startGame();
@@ -105,7 +148,7 @@ public class WindowMange extends JFrame implements ActionListener, MouseListener
 
 		//paint2();
 	}
-	private void setGrafh() {
+	public void setGrafh() {
 		ArrayList<node_data> a=new ArrayList<node_data>(g0.getV());
 		for (int i = 0; i < a.size(); i++) {
 			if(r_maxx<a.get(i).getLocation().x())r_maxx=a.get(i).getLocation().x();
@@ -126,13 +169,91 @@ public class WindowMange extends JFrame implements ActionListener, MouseListener
 	}
 	public WindowMange() {
 		initGUI();
+		setImg();
+
 	}
 
 
+	private void setImg() {
+		roobetImg1 = null;
+		try {
+			roobetImg1 = ImageIO.read(new File("data\\jon.jpg"));
+		} catch (IOException e) {
+			syso="no seccs robot";
+		}
+		roobetImg2 = null;
+		try {
+			roobetImg2 = ImageIO.read(new File("data\\tiron2.png"));
+		} catch (IOException e) {
+			syso="no seccs robot";
+		}
+		roobetImg3 = null;
+		try {
+			roobetImg3 = ImageIO.read(new File("data\\dianeriz.png"));
+		} catch (IOException e) {
+			syso="no seccs robot";
+		}
+
+
+
+
+		imgFruit = null;
+		try {
+			imgFruit = ImageIO.read(new File("data\\king3.png"));
+		} catch (IOException e) {
+			syso="no seccs fruit";
+		}
+
+
+		try {
+			imgFruit2 = ImageIO.read(new File("data\\dragon1.png"));
+		} catch (IOException e) {
+			syso="no seccs fruit";
+		}		
+	}
+	public void setGame(game_service game) {
+		this.game=game;
+	}
+	public void setRoobet(ArrayList<Nodedata> roobet) {
+		this.roobet=roobet;
+	}
+	public void setG0Graph(DGraph p) {
+		this.g0=p;
+	}
 	private void initGUI() {
 		this.setSize(1300, 1200);
 
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+
+
+
+
+		panel = new JPanel();
+		getContentPane().add(panel, BorderLayout.CENTER);
+
+		JLabel lblNewLabel = new JLabel("id");
+		panel.add(lblNewLabel, "cell 0 1,alignx trailing,aligny center");
+
+		idField = new JPasswordField();
+		idField.setColumns(13);
+		panel.add(idField, "cell 1 1,alignx center");
+
+		JLabel lblNewLabel_1 = new JLabel("level to play");
+		panel.add(lblNewLabel_1, "cell 2 1,alignx center,aligny center");
+
+		textField_1 = new JTextField();
+		panel.add(textField_1, "cell 3 1,alignx left,aligny center");
+		textField_1.setColumns(4);
+
+		btnNewButton = new JButton("play to start");
+		//   ListenForButton listener = new ListenForButton();
+
+		btnNewButton.addActionListener(this);
+		panel.add(btnNewButton, "cell 4 1");
+
+
+
 		MenuBar menuBar = new MenuBar();
 		Menu menu = new Menu("Menu");
 		menuBar.add(menu);
@@ -152,6 +273,21 @@ public class WindowMange extends JFrame implements ActionListener, MouseListener
 		menuBar.add(Choosegraph);
 		this.setMenuBar(menuBar);
 
+
+		Menu info = new Menu("Score and game information");
+		menuBar.add(info);
+		this.setMenuBar(menuBar);
+
+		MenuItem item33;
+		int b[]= {0,1,3,5,9,11,13,16,19,20,23};
+		for (int i = 0; i < b.length; i++) {
+			item33 = new MenuItem("info for level:"+b[i]);
+			item33.addActionListener(this);
+			info.add(item33);
+		}
+
+
+
 		MenuItem item17;
 		for (int i = 0; i < 24; i++) {
 			item17 = new MenuItem(""+i);
@@ -164,6 +300,8 @@ public class WindowMange extends JFrame implements ActionListener, MouseListener
 		MenuItem item2 = new MenuItem("clearAll");
 		item2.addActionListener(this);
 
+		MenuItem item3 = new MenuItem("Score and game information");
+		item3.addActionListener(this);
 
 
 
@@ -181,6 +319,7 @@ public class WindowMange extends JFrame implements ActionListener, MouseListener
 		item19.addActionListener(this);
 		menu.add(item1);
 		menu.add(item2);
+		//info.add(item3);
 		game.add(item16);
 		game.add(item18);
 		game.add(item19);
@@ -202,51 +341,50 @@ public class WindowMange extends JFrame implements ActionListener, MouseListener
 
 
 
-
+	public void paintComponnet(Graphics g) {
+		super.paint(g);
+	}
 
 
 	public void paint(Graphics g) {
 
 		super.paint(g);
-		if(!game.isRunning()) {
+
+		if(toPrintInfo) {
+			g.setColor(Color.ORANGE);
+			setLevelMax();
+			g.drawString(levelMax, 300, 140);
+
+			g.drawString(numPlayTody, 300, 120);
+			for (int i = 0,j=0; i < myBestScore.length; i++,j=j+25) {
+				g.drawString(myBestScore[i], 50, 150+j);
+			}
+			g.drawString("in level:"+levelInfoPrint+" the 10 best score:", 930, 150);
+			for (int i = 0,j=0; i < myBestScore.length; i++,j=j+25) {
+				g.drawString(infoScore.get(levelInfoPrint)[i],930, 175+j);
+			}
+
+
+
+			toPrintInfo=false;
+		}
+		if(game!=null&&!game.isRunning()) {
 			results="result for graph:"+numGraph+":"+game.toString();
 		}
-		if(numGraph!=-1) {
-			BufferedImage imgGraph  = null;
-			try {
-				imgGraph = ImageIO.read(new File( "data\\imageG"+numGraph+".jpg"));
-			} catch (IOException e) {
-				syso="no seccs fruit";
-			}
 
-			g.drawImage(imgGraph , 0, 0, 1297 , 737, this);
-		}
-		BufferedImage imgFruit = null;
-		try {
-			imgFruit = ImageIO.read(new File("fruit.jpg"));
-		} catch (IOException e) {
-			syso="no seccs fruit";
-		}
-
-		BufferedImage imgFruit2 = null;
-		try {
-			imgFruit2 = ImageIO.read(new File("appel.jpg"));
-		} catch (IOException e) {
-			syso="no seccs fruit";
-		}
+		g.setColor(Color.RED);
 		for (int i = 0; i < fruit.size(); i++) {
 			if(fruit.get(i).getType()==-1) {
-				g.drawImage(imgFruit, fruit.get(i).getPos().ix(),fruit.get(i).getPos().iy(), 15, 15, this);
-				g.drawString(""+fruit.get(i).getValue(),fruit.get(i).getPos().ix()+18,fruit.get(i).getPos().iy());
-
+				g.drawImage(imgFruit, fruit.get(i).getPos().ix()-10,fruit.get(i).getPos().iy()+17, 35, 35, this);
+				g.drawString(""+fruit.get(i).getValue(),fruit.get(i).getPos().ix()+10,fruit.get(i).getPos().iy()+17);
 			}
 			else {
-				g.drawImage(imgFruit2, fruit.get(i).getPos().ix(),fruit.get(i).getPos().iy(), 15, 15, this);
-				g.drawString(""+fruit.get(i).getValue(),fruit.get(i).getPos().ix()+18,fruit.get(i).getPos().iy());
+				g.drawImage(imgFruit2, fruit.get(i).getPos().ix()-10,fruit.get(i).getPos().iy()+17, 35, 35, this);
+				g.drawString(""+fruit.get(i).getValue(),fruit.get(i).getPos().ix()+10,fruit.get(i).getPos().iy()-17);
 			}
 
 		}
-		g.setColor(Color.BLACK);
+		g.setColor(Color.ORANGE);
 		g.drawString(syso, 99, 73);
 		if(!syso2.equals(""))g.drawString(syso2, 99, 85);
 		if(!syso1.equals(""))g.drawString(syso1, 99, 97);
@@ -254,28 +392,70 @@ public class WindowMange extends JFrame implements ActionListener, MouseListener
 		if(!syso4.equals(""))g.drawString(syso4, 99, 121);
 		if(!results.equals(""))g.drawString(results, 99, 133);
 
-		BufferedImage img = null;
-		try {
-			img = ImageIO.read(new File("roboot.jpg"));
-		} catch (IOException e) {
-			syso="no seccs robot";
-		}
 		for (int i = 0; i < roobet.size(); i++) {
-			g.drawImage(img, roobet.get(i).getLocation().ix(), roobet.get(i).getLocation().iy(), 18, 18, this);
-
+			if(i==0)	g.drawImage(roobetImg1, roobet.get(i).getLocation().ix()-10, roobet.get(i).getLocation().iy()+17, 50, 50, this);
+			if(i==1)g.drawImage(roobetImg2, roobet.get(i).getLocation().ix()-10, roobet.get(i).getLocation().iy()+17,50,50, this);
+			if(i==2)g.drawImage(roobetImg3, roobet.get(i).getLocation().ix()-10, roobet.get(i).getLocation().iy()+17,50,50, this);
 		}
 
 
 	}
 
 
+	public void setId(){  
+		String s="";
+		for (int i = 0; i < id.length; i++) {
+			s+=id[i];
+		}
+		id2= Integer.valueOf(s);            
+	}
+	public int  getId(){  
+		return    id2;        
+	}
+	public int getPlay(){
+		return  levelYouWantToPlayInt;     
+	}
+	public void setPlay(){
+		levelYouWantToPlayInt= Integer.valueOf(levelYouWantToPlay);     
+	}
 	@Override
 
 	public void actionPerformed(ActionEvent e) {
 
+
+		if(e.getSource() == btnNewButton){
+			System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+			if (idField.getPassword().length >0){
+
+				id = idField.getPassword().clone();   
+			}
+
+			levelYouWantToPlay = textField_1.getText();
+			setId();
+			setPlay();
+			clean();
+			results="";
+			numGraph=levelYouWantToPlayInt;
+
+
+			setGraphBeakgrond();
+			System.out.println(id2);
+			System.out.println(levelYouWantToPlayInt);
+		}
+
+
+
+
+
 		String str = e.getActionCommand();
 
 
+		if(str.indexOf("info for level:")==0){
+			String s=str.substring(str.indexOf(":")+1, str.length());
+			levelInfoPrint=Integer.valueOf(s);
+			getInfo();
+			toPrintInfo = true;
+		}
 
 		if(str.equals("TimeToEnd")) {
 			System.out.println(game.timeToEnd());
@@ -295,10 +475,30 @@ public class WindowMange extends JFrame implements ActionListener, MouseListener
 		}
 
 		if(str.charAt(0)>='0' &&str.charAt(0)<='9') {
-			clean();
-			results="";
-			numGraph=Integer.valueOf(str);
-			
+
+			panel = new JPanel();
+			getContentPane().add(panel, BorderLayout.CENTER);
+
+			JLabel lblNewLabel = new JLabel("id");
+			panel.add(lblNewLabel, "cell 0 1,alignx trailing,aligny center");
+
+			idField = new JPasswordField();
+			idField.setColumns(13);
+			panel.add(idField, "cell 1 1,alignx center");
+
+			JLabel lblNewLabel_1 = new JLabel("level to play");
+			panel.add(lblNewLabel_1, "cell 2 1,alignx center,aligny center");
+
+			textField_1 = new JTextField();
+			panel.add(textField_1, "cell 3 1,alignx left,aligny center");
+			textField_1.setColumns(4);
+
+			btnNewButton = new JButton("play to start");
+			//   ListenForButton listener = new ListenForButton();
+
+			btnNewButton.addActionListener(this);
+			panel.add(btnNewButton, "cell 4 1");
+
 
 		}
 
@@ -317,6 +517,47 @@ public class WindowMange extends JFrame implements ActionListener, MouseListener
 	}
 
 
+	private void getInfo() {
+		SimpleDB1 a=new SimpleDB1();
+		//	allUsers(id1);
+		a.printLog(id2);
+		//a.notSameId();
+		int playTody=a.getNumPlayTody();
+		HashMap<Integer, Integer> arrMyBest=a.getArrMyBest();
+		HashMap<Integer, ArrayList<Integer[]>> arrAllBest=a.getArrAllBest();
+
+		numPlayTody="youPlay:"+playTody+" in the game";
+		int b[]= {0,1,3,5,9,11,13,16,19,20,23};
+
+		for (int i = 0; i < b.length; i++) {
+			myBestScore[i]="in level:"+b[i]+"- you best score:"+arrMyBest.get(b[i])+".\n";	 
+		}
+		for (int i = 0; i < b.length; i++) {
+
+			String arrAll[]=new String[10];
+			for (int j = 0; j < 10&&j<arrAllBest.get(b[i]).size(); j++) {
+				int place=j+1;
+				arrAll[j]="place:"+place+"- id:"+arrAllBest.get(b[i]).get(j)[0]+" score:"+arrAllBest.get(b[i]).get(j)[1]+" move:"+arrAllBest.get(b[i]).get(j)[2];
+			}
+			infoScore.put(b[i], arrAll);
+		}
+	}
+	private void setGraphBeakgrond() {
+		System.out.println("?????????????????????????????");
+		remove(panel);
+		//remove(this);
+		new JFrame();
+		JLabel background=new JLabel(new ImageIcon("data\\imageGR"+levelYouWantToPlayInt+".jpg"));
+		getContentPane().add(background);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		 // setUndecorated(true);
+		pack();
+		setLocationRelativeTo(null);
+		setBackground(new Color(0, 0, 0, 0));
+		setVisible(true);
+
+
+	}
 	private void clean() {
 		if(game!=null)game.stopGame();
 		countRoboot=0;
@@ -528,7 +769,7 @@ public class WindowMange extends JFrame implements ActionListener, MouseListener
 			syso4="";
 		}
 	}
-	
+
 
 	private void setFruitOne(Fruit f) {
 		ArrayList<node_data> a=new ArrayList<node_data>( g0.getV());

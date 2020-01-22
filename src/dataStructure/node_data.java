@@ -1,6 +1,6 @@
 package dataStructure;
 
-import utils.Point3D;
+import MyGameGUI.Point3D;
 /**
  * This interface represents the set of operations applicable on a 
  * node (vertex) in a (directional) weighted graph.

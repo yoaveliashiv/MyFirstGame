@@ -16,7 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
-
+import MyGameGUI.Point3D;
 
 import java.io.*; 
 import java.io.FileInputStream;
@@ -31,7 +31,6 @@ import dataStructure.Nodedata;
 import dataStructure.edge_data;
 import dataStructure.graph;
 import dataStructure.node_data;
-import utils.Point3D;
 
 /**
  * This empty class represents the set of graph-theory algorithms

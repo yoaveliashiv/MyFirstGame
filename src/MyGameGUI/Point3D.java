@@ -1,10 +1,9 @@
-package MyGameGUI;
-
 /**
  * This class represents a 3D point in space, with several methods
  * for 2D including Point-Line test.
  */
 
+package MyGameGUI;
 
 import java.io.Serializable;
 
@@ -41,6 +40,7 @@ public class Point3D implements Serializable
     {
        this(p.x(), p.y(), p.z());
     }
+    public void set(int x,int y) { _x=x;_y=y;}
     public Point3D(double x,double y)
     {this(x,y,0);}
     public Point3D(String s) {
@@ -68,7 +68,7 @@ public class Point3D implements Serializable
     public int iz() {return (int)_z;}
 
     public void add(Point3D p) { add(p._x,p._y,p._z);}
-    public void set(int x,int y) { _x=x;_y=y;}
+
     public void add(double dx, double dy, double dz) {
         _x+=dx;_y+=dy;_z+=dz;
     }
@@ -104,7 +104,7 @@ public class Point3D implements Serializable
     {
         double dx = this.x() - p2.x();
         double dy = this.y() - p2.y();
-        double t = (dx*dx)+(dy*dy);
+        double t = (dx*dx+dy*dy);
         return Math.sqrt(t);
     }
 

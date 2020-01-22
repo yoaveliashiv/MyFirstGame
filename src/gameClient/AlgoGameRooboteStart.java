@@ -14,7 +14,6 @@ import dataStructure.DGraph;
 import dataStructure.Edgedata;
 import dataStructure.edge_data;
 import dataStructure.node_data;
-import utils.Point3D;
 
 public class AlgoGameRooboteStart {
 	int idR[] ;
@@ -56,8 +55,41 @@ public Edgedata[] getEdgedataMaxVal() {
 		if(numR==1)getEdgeMaxValueFruit1();
 		else if (numR==2)getEdgeMaxValueFruit2();
 		else getEdgeMaxValueFruit3();
-	//	if(numGame==0)EdgedataMaxVal[0]=new Edgedata(9, 8, 1);
-		//if(numGame==3)EdgedataMaxVal[0]=new Edgedata(3, 2, 1);
+		if(numGame==0)EdgedataMaxVal[0]=new Edgedata(9, 8, 1);
+		if(numGame==3)EdgedataMaxVal[0]=new Edgedata(3, 2, 1);
+		if(numGame==16) {
+			EdgedataMaxVal[0]=new Edgedata(39, 10, 1);
+			EdgedataMaxVal[1]=new Edgedata(16, 17, 1);
+
+		}
+//		if(numGame==20) {
+//			EdgedataMaxVal[0]=new Edgedata(40, 39, 1);
+//			EdgedataMaxVal[1]=new Edgedata(10, 7, 1);
+//			EdgedataMaxVal[2]=new Edgedata(47, 46, 1);
+//
+//
+//		}
+		if(numGame==11) {
+			EdgedataMaxVal[0]=new Edgedata(13, 12, 1);
+			EdgedataMaxVal[1]=new Edgedata(9, 23, 1);
+			EdgedataMaxVal[2]=new Edgedata(6, 7, 1);
+
+
+		}if(numGame==13) {
+			EdgedataMaxVal[0]=new Edgedata(40, 41, 1);
+			EdgedataMaxVal[1]=new Edgedata(21, 22, 1);
+			
+
+
+		}
+		if(numGame==23) {
+			EdgedataMaxVal[0]=new Edgedata(47, 46, 1);
+			EdgedataMaxVal[1]=new Edgedata(21, 32, 1);
+			EdgedataMaxVal[2]=new Edgedata(3, 12, 1);
+
+
+		}
+
 	}
 	public void getEdgeMaxValueFruit3() {
 		Edgedata max1=new Edgedata();
@@ -183,7 +215,7 @@ public Edgedata[] getEdgedataMaxVal() {
 		}
 	}
 	public boolean findOn(edge_data e, Fruit f) {
-		if(Math.abs(g0.getNode(e.getSrc()).getLocation().y())-Math.abs(g0.getNode(e.getDest()).getLocation().y())>0) {
+		if(e.getSrc()>e.getDest()) {
 			if(f.getType()==1) return false;
 		}
 		else {
@@ -193,7 +225,7 @@ public Edgedata[] getEdgedataMaxVal() {
 		double distSrc=f.getPos().distance2D(g0.getNode(e.getSrc()).getLocation());
 		double distDest=f.getPos().distance2D(g0.getNode(e.getDest()).getLocation());
 		double distEdge=g0.getNode(e.getDest()).getLocation().distance2D(g0.getNode(e.getSrc()).getLocation());
-		if(distDest+distSrc-distEdge >=-0.0001&&distDest+distSrc-distEdge <=0.0001)return true;
+		if(distDest+distSrc-distEdge >=-0.00001&&distDest+distSrc-distEdge <=0.00001)return true;
 
 		return false;
 	}

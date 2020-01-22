@@ -1,6 +1,7 @@
 package dataStructure;
 import java.io.*;
-import utils.Point3D;
+
+import MyGameGUI.Point3D;
 
 public class Nodedata implements node_data, Serializable  {
 private Point3D point;
